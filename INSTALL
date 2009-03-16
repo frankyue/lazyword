@@ -1,0 +1,30 @@
+======================================================
+			lazyword 0.1 preview
+=======================================================
+Fundment:
+   You have the QT-4.5 and the bin dictionary is /usr/local/Trolltech/Qt-4.5.0/bin
+-----------------------------
+If you like me just do follows:
+
+1 make
+2 ./lazyword &
+****************************
+If you don't like me please do follows:
+
+1 rm Makefile
+2 qmake -project
+3 qmake
+4 make
+5 ./lazyword &
+-------------------------------
+
+-------------------------------
+There's some bug may come out,you can tell me!Thank you
+
+I'll try my best to improve it!
+
+=====================================================
+
+frankyue1019@gmail.com
+
+====================================================
