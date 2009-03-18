@@ -11,11 +11,13 @@ GetAllExp::GetAllExp(QString TN)//, QWidget * parent)  : QDialog(parent)
 
 int GetAllExp::getallexplain()
 {	
-	//bool succe = true;
-	GetEFromNet * GetE = new GetEFromNet(3,"a",TableName);
+	bool succe = true;
+	
+	GetEFromNet * GetE = new GetEFromNet(3,"a",TableName);		//see more about class GetEFromNet
 	QSqlQueryModel LibTable;
     LibTable.setQuery("select * from "+ TableName +"");
     
+    //create a progress to show the progress of getting the words' explanations
 	QProgressDialog progress(tr("Get the words' explanation from the net..."),tr("cancel"),0,LibTable.rowCount(),this);
 	progress.setWindowModality(Qt::WindowModal);
 	
@@ -28,7 +30,7 @@ int GetAllExp::getallexplain()
 		if( progress.wasCanceled() )
 		{
 			QMessageBox::information(0, tr("Error"),tr("You clicked the Cancel Button!"));
-			//succe = false;
+			succe = false;
 			break;			
 		}
 			
@@ -36,12 +38,12 @@ int GetAllExp::getallexplain()
 		Letter = LibTable_Record.value("Letter").toString();
 		GetE->StartBash(Letter);
 		GetE->Getfromfile();
-		//succe = true;
+		succe = true;
 	}	
 	progress.setValue(LibTable.rowCount());
 	
-	//if(succe)
-	//{
+	if(succe)
+	{
 		QMessageBox::information(0, tr("Success"),tr("Successful!"));
-	//}
+	}
 }

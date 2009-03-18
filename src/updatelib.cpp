@@ -3,6 +3,7 @@
 
 updatelib::updatelib(QString WordLib, QWidget * parent) : QDialog(parent)
 {
+	//constructed function just produce the UI
 	wordlib = WordLib;
 	LibFile = new QLabel(tr("Lib FileName"));
 	LibFile_Box = new QLineEdit();
@@ -32,7 +33,7 @@ updatelib::updatelib(QString WordLib, QWidget * parent) : QDialog(parent)
 }
 
 
-void updatelib::browse()
+void updatelib::browse()		//function like the name browse the file
 {
 	QString Filename = QFileDialog::getOpenFileName (this,
                                 tr("Find File"), QDir::currentPath());
@@ -57,12 +58,14 @@ void updatelib::libsubmit()
 		QFile file(LibFile_Box->text());
 		file.open(QFile::ReadOnly);
     	QTextStream Insertlib(&file);
-		for(int i = 0; !Insertlib.atEnd(); i++)
+    	//The insertlib get the file's point
+    	
+		for(int i = 0; !Insertlib.atEnd(); i++)		//if not at the end of file,go on
     	{    
     		InsertWord = Insertlib.readLine();
     		q.exec("select * from " + wordlib +" where Letter = '" +InsertWord +"'");
     		bool d = q.next();					
-			if(!d)											//Check if the word exist!
+			if(!d)											//if the word not exist in the old wordlib,insert it!
 			{
 				q.exec("insert into "+ wordlib +"(Letter) values('"+InsertWord+"')");
 			}

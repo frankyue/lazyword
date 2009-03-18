@@ -14,14 +14,15 @@ GetEFromNet::GetEFromNet(int EID,QString letter,QString TN)
 	//{
 		ExplainID = EID;
 		Letter = letter;
-		if( ExplainID == 0)
+		
+		if( ExplainID == 0)		//If the word has no explanation,first to get it from net then to store it!
 		{
 			StartBash();
 		}
 	//}
 }
 
-QString GetEFromNet::GetLastE()
+QString GetEFromNet::GetLastE()		//Get the explanation
 {
 	if( ExplainID == 1)
 	{
@@ -33,9 +34,10 @@ QString GetEFromNet::GetLastE()
 	}
 }
 
-QString GetEFromNet::Getfromfile()
+QString GetEFromNet::Getfromfile()			//get the explanation from the file which create by shell
 {
 	QString File = "data/bash/DownExp/Explain/chinese.txt";
+	//how chinese.txt produce,just read the shell script GE.sh in 'data/bash/DownExp'
 
 	//QString File = "src/bash/DownExp/Explain/chinese.txt";
 	
@@ -48,10 +50,11 @@ QString GetEFromNet::Getfromfile()
 	//qDebug() << Explain;	
 	QString UpdateEx = "update ";
 	UpdateEx = UpdateEx + TableName + "set Explain ='" + Explain + "' where Letter= '" + Letter + "'";
-	q.exec(UpdateEx);
+	q.exec(UpdateEx);		//insert the explanation into the database
+	
 	QString UpdateEs = "update "; 
 	UpdateEs = UpdateEs + TableName +" set ES = 1 where Letter = '" + Letter + "'";
-	q.exec(UpdateEs);
+	q.exec(UpdateEs);		//change the sign of explanation
 	         
 	return Explain;
 }
@@ -59,12 +62,16 @@ QString GetEFromNet::Getfromfile()
 void GetEFromNet::StartBash(QString letter)
 {
 	QString executable ="data/bash/DownExp/GE.sh";
+	//the GE.sh accomplished to get the explanation's htm and get the explanation 
+	
 	//QString executable ="src/bash/DownExp/GE.sh";
 	if( !letter.isNull() )
 	{
 		Letter = letter;
 		//qDebug("not blank!");
-        }
+    }
+    
+    //create a qt process to execute the shell 
 	QProcess proc;
     QStringList arguments;
     arguments<<Letter;
@@ -75,7 +82,7 @@ void GetEFromNet::StartBash(QString letter)
 
 }
 
-QString GetEFromNet::GetFromDB()
+QString GetEFromNet::GetFromDB()		//If the EID = 1 which means the word's explanation is in the database!so get it!
 {
 	QSqlQueryModel * LibModel = new QSqlQueryModel;
 	QString model = "select * from ";

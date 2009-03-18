@@ -1,5 +1,6 @@
 #include "explain.h"
 
+//this class is not use now
 ExplainDialog::ExplainDialog(QWidget * parent) : QDialog(parent)
 {
 	QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -9,7 +10,7 @@ ExplainDialog::ExplainDialog(QWidget * parent) : QDialog(parent)
 	mainLayout->addWidget(SaveDegreeBox);
     setLayout(mainLayout);
 
-    setWindowTitle(tr("show_SoftName"));
+    setWindowTitle(tr("lazyword"));
     resize(400, 300);
 //	resize()			
 }

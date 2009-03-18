@@ -1,5 +1,7 @@
 #include "GetSelect.h"
 
+
+//This function is help the soft know what user had select the degree! 
 int GetSelect::Select(bool strange, bool understand, bool master, bool all)
 //Instruction all = 4 ,strange = 1 , understand = 2 , master = 3
 //return  1 , 2 , 3 , 4 , 5=3+2=5-4, 6=3+1=6-4 ,7=2+1=7-4

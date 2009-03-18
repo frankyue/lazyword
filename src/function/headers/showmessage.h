@@ -8,7 +8,7 @@ class showmessage: public QWidget
 {
         Q_OBJECT
 public:
-        showmessage(QString wordget,QString Explainget,QString color,QWidget *parent = 0);
+        showmessage(QString wordget,QString Explainget,QString color,int fontsize = 35,int time = 5,QWidget *parent = 0);
 protected:
         void paintEvent(QPaintEvent *event);
         void mouseDoubleClickEvent( QMouseEvent * event );
@@ -16,6 +16,7 @@ private:
         QString Word;
         QString Explain;
         QString Color;
+        int sizefont;
 };
 
 

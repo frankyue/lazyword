@@ -8,7 +8,7 @@
 class InitialLR
 {
 public:
-	InitialLR()
+	InitialLR()			//check if the soft had initialed
 	{
 		readSetting();
 		if( SqlInitial != "Yes" || SqlInitial.isEmpty() )
@@ -24,6 +24,7 @@ public:
 	void readSetting();
 };
 
+//----------save and read setting form the file of '~/.config/lazyword/lazyword.conf'----------
 void InitialLR::saveSetting()
 {
 	QSettings settings("lazyword","lazyword");
@@ -34,6 +35,7 @@ void InitialLR::readSetting()
 	QSettings settings("lazyword","lazyword");
 	SqlInitial = settings.value("Config/SqlInitial").toString();
 }
+//----------save and read setting form the file of '~/.config/lazyword/lazyword.conf'----------
 
 void InitialLR::DatabaseInitial()
 {	

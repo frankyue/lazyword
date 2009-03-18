@@ -2,6 +2,7 @@
 
 Inslib::Inslib(QWidget * parent) : QDialog(parent)
 {
+	//the constructed function just produce the UI
 	LibFile = new QLabel("FileName");
 	LibNewName = new QLabel("NewName");
 	LibFile_Box = new QLineEdit();
@@ -34,7 +35,7 @@ Inslib::Inslib(QWidget * parent) : QDialog(parent)
 }
 
 
-void Inslib::browse()
+void Inslib::browse()		//function like the name browse the file
 {
 	QString Filename = QFileDialog::getOpenFileName (this,
                                 tr("FindFile"), QDir::currentPath());
@@ -56,18 +57,23 @@ void Inslib::libsubmit()
 	else
 	{
 		bool NoErr;
+		
     	QString createtable = "CREATE TABLE ";
     	QString createpart = " (IDLetter integer not null PRIMARY KEY AUTOINCREMENT,Letter VARCHAR(45) NOT NULL,Familiar INTEGER NOT NULL DEFAULT 1,Explain VARCHAR(45),ES INTEGER NOT NULL DEFAULT 0);";
-   		
    		createtable += LibNewName_Edit->text();
-		createtable += createpart;	
+		createtable += createpart;
+		//insert new wordlib's sql language
+			
 		NoErr = q.exec(createtable);
+		
 		if(NoErr)
 		{		
+			//if no err start to insert the word from the file
 			QString InsertWord;
 			QFile file(LibFile_Box->text());
 			file.open(QFile::ReadOnly);
     		QTextStream Insertlib(&file);
+    		
 			for(int i = 0; !Insertlib.atEnd(); i++)
     		{    
     			InsertWord = Insertlib.readLine();
@@ -97,6 +103,9 @@ QString Inslib::newlib()
 	return LibNewName_Edit->text();
 }
 
+
+
+//-----------------just test at first by author-------------------
 void Inslib::test()
 {
 	bool ab;

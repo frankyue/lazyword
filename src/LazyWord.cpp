@@ -9,17 +9,29 @@
 #include "updatelib.h"
 #include "getallexp.h"
 
-int LazyWord::Invertime = 10;
 LazyWord::LazyWord( QWidget * parent ) : QDialog(parent) ,LID(0),CheckEnd(0),GetTheSlot(0)
 {
+	//-----------Open the database--------------
 	SqlOperate a;
 	a.connectdatabase();
+	//-----------Open the database--------------
+	
+//================Initial the UI start=================
 	RestoreConfig_color();
 	RestoreConfigall();
     ConfigureUI();
     createActions();
     IconMenu();
 	ShowIcon();
+	
+	
+	//************For test*************
+	T = new QTimer(this);
+	connect(T,SIGNAL(timeout()),this,SLOT(remind()));
+	T->start(3600 * 1000);
+	
+	//************For test**************
+	
 	
 	connect(ActionRestore, SIGNAL(triggered()), this, SLOT(ShowNormal()));
 	
@@ -49,16 +61,25 @@ LazyWord::LazyWord( QWidget * parent ) : QDialog(parent) ,LID(0),CheckEnd(0),Get
     setWindowTitle(tr("LazyWord"));
     setGeometry(QRect(400, 200, 449, 407));
     resize(400, 300);
-    
+//======================Initial the UI end==========================  
 }
+int LazyWord::Invertime = 10;
+//----------------------------Follow  SLOTS----------------------------
 
-//----------------------------SLOT----------------------------
-void LazyWord::changeItime(int i)
+//************************just for test*********************************
+void LazyWord::remind()
+{
+	showmessage * showWE = new showmessage("Attention","You have sitted 1 hour with computer","#e20003",30,40,0);
+    showWE->show();
+}
+//************************just for test*********************************
+
+void LazyWord::changeItime(int i)			//change the Interval time 
 {
 	Invertime = i;
 }
 
-void LazyWord::setshowcolor()
+void LazyWord::setshowcolor()				//Change the font color of the explanation
 {
 	QColor lor(colorselect);
 	QColor color = QColorDialog::getColor( lor, this);
@@ -70,7 +91,7 @@ void LazyWord::setshowcolor()
 	RestoreConfig_color();
 }
 
-void LazyWord::setBoxVisible(bool visible)
+void LazyWord::setBoxVisible(bool visible)			//set the QSpinBox when select the degree
 {
 	show_StrangeBox->setChecked(false);
     show_UnderstandBox->setChecked(false);
@@ -81,7 +102,7 @@ void LazyWord::setBoxVisible(bool visible)
 	show_MasterBox->setEnabled(!visible);
 }
 
-void LazyWord::setBoxVisibleSingle()
+void LazyWord::setBoxVisibleSingle()				//set the QSpinBox when the strang,unstand and master was checked at the same time 
 {
 	show_AllBox->setChecked(false);
 	if( show_StrangeBox->isChecked() && show_UnderstandBox->isChecked() && show_MasterBox->isChecked() )
@@ -94,7 +115,7 @@ void LazyWord::setBoxVisibleSingle()
 	}
 }
 
-void LazyWord::CloseDialogWindow(QCloseEvent *event)
+void LazyWord::CloseDialogWindow(QCloseEvent *event)		//close the mainwindow but not close the mainwindow,hide instead
 {
     if (trayIcon->isVisible()) 
     {
@@ -103,7 +124,7 @@ void LazyWord::CloseDialogWindow(QCloseEvent *event)
     }
 }
 
-void LazyWord::ShowIcon()
+void LazyWord::ShowIcon()			// set the trayicon
 {
 	QIcon icon;
     icon.addPixmap(QPixmap("data/images/tux.png"), QIcon::Normal, QIcon::Off);
@@ -111,9 +132,10 @@ void LazyWord::ShowIcon()
     setWindowIcon(icon);
 }
 
-void LazyWord::ShowMessage()
+void LazyWord::ShowMessage()		//show the word one by one on the trayicon's message
 {
-	if( LID >= CheckEnd || ChenkTableName != WordLibBox->currentText())
+	//if the word's ID is end of the lib or user change the lib,then start the word show with the first ID
+	if( LID >= CheckEnd || ChenkTableName != WordLibBox->currentText())	
 	{
 		LID = 0;
 	}
@@ -133,40 +155,47 @@ void LazyWord::ShowMessage()
 
 }
 
-void LazyWord::LetterClicked()
-{	
+void LazyWord::LetterClicked()		//get the singal of clicked the word which showed on the trayicon
+{
+	//initial the GetE and get the explanation of the word	
 	GetEFromNet * GetE = new GetEFromNet(ES,LetterToShow,WordLibBox->currentText());
 	QString ExplainShow = GetE->GetLastE();
+        
         //QString Show;
         //Show = LetterToShow + ":\n\t" + ExplainShow ;
         //    QMessageBox::information(0, tr("Explain"),Show);
 
-    showmessage * showWE = new showmessage(LetterToShow,ExplainShow,colorselect,0);
+
+	//show the explanation by the class of showmessage
+    showmessage * showWE = new showmessage(LetterToShow,ExplainShow,colorselect);
     showWE->show();
 }
 
-void LazyWord::getAllExplain()
+void LazyWord::getAllExplain()		//Get all explanation from net
 {
+	//check if the wordlib is selected
 	if( WordLibBox->currentText().isEmpty())
 	{
 		QMessageBox::critical(0,QObject::tr("Error!"),QObject::tr("Please choose a wordLib!"),QMessageBox::Cancel);
 	}
-	int check = warring();
+	
+	int check = warring();	//warring() see below
 	if( check == 1 ) 
 	{
 		GetAllExp * getall = new GetAllExp(WordLibBox->currentText());
 	}
 }
 
-void LazyWord::updateLib()
+void LazyWord::updateLib()		//ubdate the lib which is exist 
 {	
+	//check if the wordlib is selected 
 	if( WordLibBox->currentText().isEmpty())
 	{
 		QMessageBox::critical(0,QObject::tr("Error!"),QObject::tr("Please choose a wordLib!"),QMessageBox::Cancel);
 	}
 	else
 	{
-		updatelib * ul = new updatelib(WordLibBox->currentText());
+		updatelib * ul = new updatelib(WordLibBox->currentText());	//more about the updatelib see class updatelib
 		int accepted = ul->exec();
 		if( accepted == 1)
 		{
@@ -176,9 +205,9 @@ void LazyWord::updateLib()
 	}
 }
 
-void LazyWord::InsertLib()
+void LazyWord::InsertLib()		//Insert new lib to the databases
 {
-	Inslib *avb = new Inslib(this);
+	Inslib *avb = new Inslib(this);		//more about the Inslib see class Inslib
 	int accepted = avb->exec();
 	if( accepted == 1)
 	{
@@ -192,6 +221,7 @@ void LazyWord::InsertLib()
 
 void LazyWord::OkSubmit()    //store the configure ,close the mainwindow and start to run the soft 
 {
+	//check if the wordlib is exist
 	if( WordLibBox->currentText().isEmpty())
 	{
 		QMessageBox::critical(0,QObject::tr("Error!"),QObject::tr("Please choose a wordLib!"),QMessageBox::Cancel);
@@ -204,10 +234,14 @@ void LazyWord::OkSubmit()    //store the configure ,close the mainwindow and sta
 		}
 		else
 		{
+			//initial the Invertal time and start to count 
 			timer = new QTimer(this);
 			timer->start(Invertime * 1000);
 			GetTheSlot = 1;
+			
+			//connect the Invertaltime,when the time is out,show the word on trayicon'message
 			connect(timer,SIGNAL(timeout()),this,SLOT(StartToLazy()));
+			
 			reject();
 		}
 	}
@@ -222,13 +256,13 @@ void LazyWord::StartToLazy() //Good Function name
 	}
 }
 
-void LazyWord::ShowNormal()
+void LazyWord::ShowNormal()		//restore the mainwindow and stop to show the word
 {
 	GetTheSlot = 0;
 	showNormal();
 }
 
-void LazyWord::about()
+void LazyWord::about()			// shwo the about information
 {
 	QMessageBox msgBox;
 	msgBox.setText(tr("\tLazyWord is based on the stardict at present(not all),which can help Lazy man like me to remember the word where you store inthe stardict and import them into LazyWord's Databases! \n"
@@ -249,7 +283,7 @@ void LazyWord::about()
 		}	
 }
 
-void LazyWord::storequit()				//store the confiugration and quit
+void LazyWord::storequit()				//store the confiugration to LastConfig and quit
 {
 	QSqlQuery q;
 	q.prepare("UPDATE LastConfig SET LetterID = ? , ShowTime = ? , IntervalTime = ? , LibSelect = ? where ID = 1");
@@ -258,10 +292,11 @@ void LazyWord::storequit()				//store the confiugration and quit
 	q.bindValue(2,QVariant(ItimeBox->value()));
 	q.bindValue(3,WordLibBox->currentText());
 	q.exec();	
-	QCoreApplication::quit();
+	
+	QCoreApplication::quit();			//Quit the soft
 }
 
-void LazyWord::changetime()				//change the show time and Interval
+void LazyWord::changetime()				//change the show time of Interval
 {
 	Invertime = ItimeBox->value();
 }
@@ -269,7 +304,8 @@ void LazyWord::changetime()				//change the show time and Interval
 
 //----------------Above slots---------------------
 
-//----------------Flow UI -----------------------
+
+//----------------Flow UI codes-----------------------
 
 void LazyWord::ConfigureUI()
 {
@@ -332,7 +368,7 @@ void LazyWord::ConfigureUI()
     ConfigureBox->setLayout(messageLayout);
 }
 
-void LazyWord::createActions()
+void LazyWord::createActions()		//the trayicon's menu action to control the soft
 {
     ActionRestore = new QAction(tr("&Restore"), this);
     connect(ActionRestore, SIGNAL(triggered()), this, SLOT(ShowNormal()));
@@ -341,7 +377,7 @@ void LazyWord::createActions()
     connect(ActionQuit, SIGNAL(triggered()), this, SLOT(storequit()));
 }
 
-void LazyWord::IconMenu()
+void LazyWord::IconMenu()		//create the trayicon's menu
 {
     MenuIcon = new QMenu(this);
 	MenuIcon->addAction(ActionRestore);
@@ -353,8 +389,9 @@ void LazyWord::IconMenu()
 }
 //----------------Above UI -----------------------
 
+
 //----------------Flow Function-------------------
-int LazyWord::warring()
+int LazyWord::warring()		//to warn the user of these ----- look donw the InformativeText
 {
 	QMessageBox msgBox;
 	msgBox.setText("warring!");
@@ -371,12 +408,14 @@ int LazyWord::warring()
        		check = 0;
 	    	break;
 	 }	
-	return check;
+	return check;		//return 0,1 
 }
 
-QComboBox * LazyWord::WordLib()
+QComboBox * LazyWord::WordLib()		//Create the QcomboBox with the data
 {
 	QComboBox *TablesComboBox = new QComboBox;
+	
+	//---------------SQL language start--------------------Get all wordlib and insert into the qcombobox
 	QSqlQueryModel AllTable;
     AllTable.setQuery("select * from AllTables;");
     
@@ -392,16 +431,17 @@ QComboBox * LazyWord::WordLib()
 			TablesComboBox->addItem(AllTable_Record.value("TableName").toString());
 		}
 	}
-
+	//---------------SQL language end--------------------
    	return TablesComboBox;   	
 }
 
-QSqlQueryModel * LazyWord::GetLibModel()			//Get the Date whic the user want to show
+QSqlQueryModel * LazyWord::GetLibModel()		//Get the Date which the user want to show by degree selected
 {
-	GetSelect GS;
+	GetSelect GS;		//more see about class GetSelect 
 	int FS = GS.Select(show_StrangeBox->isChecked(),show_UnderstandBox->isChecked(),show_MasterBox->isChecked()
 	,show_AllBox->isChecked());	
 	//qDebug("FO = %d,IO = %d",FS,IO);
+	
 	QSqlQueryModel * LibModel = new QSqlQueryModel;
 	QString model = "select * from ";	 
 
@@ -427,7 +467,7 @@ QSqlQueryModel * LazyWord::GetLibModel()			//Get the Date whic the user want to 
  	return LibModel; 	
 }
 
-void LazyWord::RestoreConfig_color()
+void LazyWord::RestoreConfig_color()			//Get the configuration of color from the database
 {
 	QSqlQueryModel GetTheLastconfig;
 	GetTheLastconfig.setQuery("select * from LastConfig;");
@@ -436,7 +476,7 @@ void LazyWord::RestoreConfig_color()
     colorselect = Lastconfig_Record.value("Color").toString();
 }
 
-void LazyWord::RestoreConfigall()
+void LazyWord::RestoreConfigall()				//Get the configuration from the database
 {
 	QSqlQueryModel GetTheLastconfig;
 	GetTheLastconfig.setQuery("select * from LastConfig;");

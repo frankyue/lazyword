@@ -51,6 +51,8 @@ private slots:
     void changetime();
     void setshowcolor();
     void changeItime(int i);
+    
+    void remind();
 private:
     void ConfigureUI();
     void createActions();
@@ -92,6 +94,7 @@ private:
     QMenu *MenuIcon;
     
     QTimer *timer;
+    QTimer *T;
 //-----------------------Test-------------------
 	QLabel *show1;
 	QLabel *show2;
@@ -106,7 +109,7 @@ private:
     int LID;
     int CheckEnd;					//The last LID
     QString ChenkTableName;			//Get The TableID
-    int GetTheSlot;
+    int GetTheSlot;					//The variable to control the word whether start to show on not
     QString LetterToShow;
 
     QString colorselect;
